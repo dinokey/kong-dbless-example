@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package member;
+
+message MemberId {
+    string id = 1;
+}
+
+message Member {
+    string id = 1;
+    string name = 2;
+    string place = 3;
+    string hobby = 4;
+}
+
+service MemberService {
+    rpc AddMember (Member) returns (MemberList) {}
+    rpc getMember (MemberId) returns (Member) {}
+    rpc GetAllMembers (Empty) returns (MemberList) {}
+    rpc DeleteMember (MemberId) returns (MemberList) {}
+    rpc EditMember (Member) returns (Member) {}
+
+}
+
+message Empty {}
+
+message MemberList {
+   repeated Member members = 1;
+}

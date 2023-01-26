@@ -1,0 +1,11 @@
+ _format_version: "3.0"
+ _transform: true
+
+ services:
+ - url: http://localhost:3000
+   name: member_service
+   routes:
+   - name: member_route
+     paths:
+     - /member
+     strip_path: true
