@@ -11,7 +11,7 @@ To completely run this guide, you need to ensure some things:
 ## Run Kong Gateway
 ### 1. Run simple REST Service. 
 
-This is optional step, if you already have gRPC app running in server. Then you can skip this one.
+This is optional step, if you already have REST app running in server. Then you can skip this one.
 
 This repo already provide simple REST Service, just open terminal in `member-app` folder, and run command 
 ```shell
@@ -29,7 +29,7 @@ For example, a simple configuration file with a Service and a Route may look som
  _transform: true
 
  services:
- - url: http://localhost:3000
+ - url: http://172.17.0.1:3000
    name: member_service
    routes:
    - name: member_route
@@ -49,7 +49,7 @@ From the same directory where `kong.yml` take place, run the following command (
 ```sh
 ./run-kong.sh
 ```
-The content of  `run-kong.sh` file is:
+The content of  [`run-kong.sh`](./run-kong.sh) file is:
 ```sh
 #!/bin/bash
 
@@ -63,13 +63,6 @@ docker run -d --name kong-dbless \
   -e "KONG_PROXY_ERROR_LOG=/dev/stderr" \
   -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
   -e "KONG_ADMIN_LISTEN=0.0.0.0:8001" \
-  -p 8000:8000 \
-  -p 8443:8443 \
-  -p 8001:8001 \
-  -p 8444:8444 \
-  -p 8445:8445 \
-  -p 8003:8003 \
-  -p 8004:8004 \
   kong/kong-gateway:3.1.1.1
 ```
 Where:
@@ -80,8 +73,8 @@ Where:
 - `KONG_DECLARATIVE_CONFIG`: The path to a declarative configuration file inside the container. This path **should match the target path** that you’re mapping with -v.
 - `All _LOG` parameters: set filepaths for the logs to output to, or use the values in the example to print messages and errors to stdout and stderr.
 - `KONG_ADMIN_LISTEN`: The port that the Kong Admin API listens on for requests.
-- `All -p` parameters: List of port bind to container. See [kong default ports](https://docs.konghq.com/gateway/latest/production/networking/default-ports/) for the details.
 
+*Note: we use --network=host because the example run on the host network (Kong in docker need access to 'localhost of host'). If the REST server available externally (using DNS or IP address), we can omit --network=host and use port bindings instead. See [run-kong-bridge.sh](./run-kong-bridge.sh) for example*
 
 ### 4. Verify that Kong Gateway is running
 
@@ -103,7 +96,7 @@ The response may looks like:
     {
       "path": null,
       "tls_verify_depth": null,
-      "host": "localhost",
+      "host": "172.17.0.1",
       "tags": null,
       "ca_certificates": null,
       "id": "ce525a6f-659d-5766-a156-0e204709ac8a",
@@ -179,7 +172,7 @@ Todo do that, we need to convert `kong.yml` to JSON format. We can use [yaml too
   "_transform": true,
   "services": [
     {
-      "url": "http://localhost:3000",
+      "url": "http://172.17.0.1:3000",
       "name": "member_service",
       "routes": [
         {
@@ -203,7 +196,7 @@ Then, add Github API Service and Route, also apply **rate limiting** plugin. The
   "_transform": true,
   "services": [
     {
-      "url": "http://localhost:3000",
+      "url": "http://172.17.0.1:3000",
       "name": "member_service",
       "routes": [
         {
