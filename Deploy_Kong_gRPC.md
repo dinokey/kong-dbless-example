@@ -141,7 +141,7 @@ The response may looks like:
 
 Now, you can test the Kong Gateway with registered Service and Route, below is the example gRPC request with grpcurl:
 ```sh
-grpcurl -plaintext -import-path $path/member-app-grpc -proto member.proto localhost:50051 member.MemberService/GetAllMembers
+grpcurl -plaintext -import-path $path/member-app-grpc -proto member.proto localhost:9080 member.MemberService/GetAllMembers
 ```
 *note: replace $path with absolute path to this project (run `pwd` command)*
 
