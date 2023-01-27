@@ -9,6 +9,6 @@ This repo contains simple guidence of running Kong Gateway in DB-less mode and i
 To know more about DB-less deployment mode in Kong, yau can read from the docs [here](https://docs.konghq.com/gateway/3.1.x/production/deployment-topologies/db-less-and-declarative-config/).
 
 
-## Run Kong
+## Run Kong Gateway
 - Read [`Deploy_Kong_REST.md`](./Deploy_Kong_REST.md) if you want to run Kong Gateway to proxying REST request
 - Read [`Deploy_Kong_gRPC.md`](./Deploy_Kong_gRPC.md) if you want to run Kong Gateway to proxying gRPC request

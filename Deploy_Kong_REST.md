@@ -1,6 +1,6 @@
 # Kong Gateway in DB-less mode Guideline
 
-This guide provides steps to run **Kong Gateway** on Docker without a database (DB-less mode). It'll specific to proxying REST Request (from client) to REST Upstream Service
+This guide provides steps to run **Kong Gateway** with Docker without a database (DB-less mode). It'll specific to proxying REST Request (from client) to REST Upstream Service
 
 ## Prerequisites
 To completely run this guide, you need to ensure some things:
@@ -10,6 +10,8 @@ To completely run this guide, you need to ensure some things:
 
 ## Run Kong Gateway
 ### 1. Run simple REST Service. 
+
+This is optional step, if you already have gRPC app running in server. Then you can skip this one.
 
 This repo already provide simple REST Service, just open terminal in `member-app` folder, and run command 
 ```shell
@@ -35,7 +37,9 @@ For example, a simple configuration file with a Service and a Route may look som
      - /member
      strip_path: true
 ```
-The file already provided in this repo with name `kong.yml`
+The file already provided in this repo with name `kong.yml`.
+
+You can change `services.url` value with your own REST app URL. In this guide, we use simple REST app that deployed in the previous step.
 
 See the [declarative configuration schema](https://github.com/Kong/deck/blob/main/file/kong_json_schema.json) for all configuration options.
 

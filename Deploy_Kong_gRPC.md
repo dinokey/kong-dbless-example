@@ -1,6 +1,6 @@
 # Kong Gateway in DB-less mode Guideline
 
-This guide provides steps to run **Kong Gateway** on Docker without a database (DB-less mode). It'll specific to proxying gRPC Request (from client) to gRPC Upstream Service.
+This guide provides steps to run **Kong Gateway** with Docker without a database (DB-less mode). It'll specific to proxying gRPC Request (from client) to gRPC Upstream Service.
 
 ## Prerequisites
 To completely run this guide, you need to ensure some things:
@@ -18,6 +18,8 @@ Starting with version 1.3, gRPC proxying is natively supported in Kong Gateway. 
 In Kong 1.3, gRPC support assumes gRPC over HTTP/2 framing. As such, make sure you have at least one HTTP/2 proxy listener (check out the [Configuration Reference](https://docs.konghq.com/gateway/3.1.x/reference/configuration/) for how to). In this guide, we will assume Kong is listening for HTTP/2 proxy requests on port 9080.
 
 ### 1. Run simple gRPC Service. 
+
+This is optional step, if you already have gRPC app running in server. Then you can skip this one.
 
 This repo already provide simple gRPC Service, just open terminal in `member-app-grpc` folder, and run command: 
 ```shell
@@ -44,7 +46,9 @@ For example, a simple configuration file with a gRPC Service and a Route may loo
      paths:
      - /
 ```
-The file already provided in this repo with name `kong-grpc.yml`
+The file already provided in this repo with name `kong-grpc.yml`.
+
+You can change `services.url` value with your own gRPC app URL. In this guide, we use simple gRPC app that deployed in the previous step.
 
 See the [declarative configuration schema](https://github.com/Kong/deck/blob/main/file/kong_json_schema.json) for all configuration options.
 
