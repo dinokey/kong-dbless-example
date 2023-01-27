@@ -46,7 +46,7 @@ For example, a simple configuration file with a gRPC Service and a Route may loo
      paths:
      - /
 ```
-The file already provided in this repo with name `kong-grpc.yml`.
+The file already provided in this repo with name [`kong-grpc.yml`](./kong-grpc.yml).
 
 You can change `services.url` value with your own gRPC app URL. In this guide, we use simple gRPC app that deployed in the previous step.
 
@@ -198,7 +198,7 @@ From the previous steps, we already have the runnning Kong Gateway. Let say we w
 - Change route path from `/` to `/member.MemberService/GetAllMembers`
 - Add new route with path `/member.MemberService/DeleteMember`
 
-Todo do that, we need to convert `kong-grpc.yml` to JSON format. We can use [yaml tools](https://onlineyamltools.com/convert-yaml-to-json) to convert yml/yaml to JSON. The result is below:
+Todo do that, we need to convert [`kong-grpc.yml`](./kong-grpc.yml) to JSON format. We can use [yaml tools](https://onlineyamltools.com/convert-yaml-to-json) to convert yml/yaml to JSON. The result is below:
 
 ```json
 {

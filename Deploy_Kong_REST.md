@@ -37,7 +37,7 @@ For example, a simple configuration file with a Service and a Route may look som
      - /member
      strip_path: true
 ```
-The file already provided in this repo with name `kong.yml`.
+The file already provided in this repo with name [`kong.yml`](./kong.yml).
 
 You can change `services.url` value with your own REST app URL. In this guide, we use simple REST app that deployed in the previous step.
 
@@ -164,7 +164,7 @@ From the previous steps, we already have the runnning Kong Gateway. Let say we w
 - Add Github API Service (remote service) and it's Route
 - Apply **rate-limiting** plugin
 
-Todo do that, we need to convert `kong.yml` to JSON format. We can use [yaml tools](https://onlineyamltools.com/convert-yaml-to-json) to convert yml/yaml to JSON. The result is below:
+Todo do that, we need to convert [`kong.yml`](./kong.yml) to JSON format. We can use [yaml tools](https://onlineyamltools.com/convert-yaml-to-json) to convert yml/yaml to JSON. The result is below:
 
 ```json
 {
