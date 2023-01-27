@@ -62,10 +62,10 @@ server.addService(memberProto.member.MemberService.service, {
 });
 
 server.bindAsync(
-  "127.0.0.1:50051",
+  "0.0.0.0:50051",
   grpc.ServerCredentials.createInsecure(),
   (error, port) => {
-    console.log("Server running at 127.0.0.1:50051");
+    console.log("Server running at 0.0.0.0:50051");
     server.start();
   }
 );

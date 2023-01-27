@@ -58,7 +58,7 @@ From the same directory where `kong-grpc.yml` take place, run the following comm
 ```sh
 ./run-kong-grpc.sh
 ```
-The content of  `run-kong-grpc.sh` file is:
+The content of  [`run-kong-grpc.sh`](./run-kong-grpc.sh) file is:
 ```sh
 #!/bin/bash
 
@@ -73,14 +73,6 @@ docker run -d --name kong-dbless \
   -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
   -e "KONG_ADMIN_LISTEN=0.0.0.0:8001" \
   -e "KONG_PROXY_LISTEN=0.0.0.0:8000, 0.0.0.0:8443, 0.0.0.0:9080 http2, 0.0.0.0:9081 http2 ssl" \
-  -p 8000:8000 \
-  -p 8443:8443 \
-  -p 8001:8001 \
-  -p 8444:8444 \
-  -p 8445:8445 \
-  -p 8003:8003 \
-  -p 8004:8004 \
-  -p 9080:9080 \
   kong/kong-gateway:3.1.1.1
 ```
 Where:
@@ -92,9 +84,10 @@ Where:
 - `All _LOG` parameters: set filepaths for the logs to output to, or use the values in the example to print messages and errors to stdout and stderr.
 - `KONG_ADMIN_LISTEN`: The port that the Kong Admin API listens on for requests.
 - `KONG_PROXY_LISTEN`: Comma-separated list of addresses and ports on which the proxy server should listen for HTTP/HTTPS traffic.
-- `All -p` parameters: List of port bind to container. See [kong default ports](https://docs.konghq.com/gateway/latest/production/networking/default-ports/) for the details.
 
 As we can see at `KONG_PROXY_LISTEN`, there are ports (9080 and 9081) dedicated for http2, that ports will use for gRPC communication.
+
+*Note: we use --network=host because the example run on the host network (Kong in docker need access to 'localhost of host'). If the grpc server available externally (using DNS or IP address), we can omit --network=host and use port bindings instead. See [run-kong-grpc-bridge.sh](./run-kong-grpc-bridge.sh) for example*
 
 ### 4. Verify that Kong Gateway is running
 
@@ -213,7 +206,7 @@ Todo do that, we need to convert `kong-grpc.yml` to JSON format. We can use [yam
   "_transform": true,
   "services": [
     {
-      "url": "grpc://localhost:50051",
+      "url": "grpc://172.17.0.1:50051",
       "name": "grpc_member_service",
       "routes": [
         {
@@ -239,7 +232,7 @@ Then, modify existing route and add new route. The configuration become:
   "_transform": true,
   "services": [
     {
-      "url": "grpc://localhost:50051",
+      "url": "grpc://172.17.0.1:50051",
       "name": "grpc_member_service",
       "routes": [
         {

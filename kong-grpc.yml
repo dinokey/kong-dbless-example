@@ -2,7 +2,7 @@
  _transform: true
 
  services:
- - url: grpc://localhost:50051
+ - url: grpc://172.17.0.1:50051
    name: grpc_member_service
    routes:
    - name: grpc_member_route
