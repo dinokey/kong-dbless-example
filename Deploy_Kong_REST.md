@@ -467,6 +467,11 @@ jwt_secrets:
 ```
 *Note: we removed **rate-limiting** plugin for shorten our new config*
 
+Send the configuration above to Kong `/config` endpoint:
+```sh
+curl -X POST -d '{$yourKongConfigJson}' http://localhost:8001/config 
+```
+
 ### 4. Test the APIs
 Now, we can test the APIs. After added Kong JWT Plugin, our requests need to include `Authorization` header contains JWT.
 
