@@ -286,6 +286,17 @@ Firstly, add **Kong JWT Plugin definition** in your Kong declarative configurati
   }
 ]
 ```
+```yaml
+plugins:
+  - name: jwt
+    enabled: true
+    service: member_service
+    config:
+      secret_is_base64: false
+      claims_to_verify:
+        - exp
+      key_claim_name: iss
+```
 As you can see above, we add plugin named `jwt` and attach it to `member_service` (if you delete the `service` field, then plugin will attach globally. Meaning that the plugin will attach to all services). For its [`config options`](https://docs.konghq.com/hub/kong-inc/jwt/#parameters), tell the plugin to check the `exp` value to verify that the access token has not expired. It also check the claim by token issuer (`iss`).
 
 To make the plugin works, you need to create a Consumer and associate it to one or more JWT credentials (holding the public and private keys used to verify the token). The Consumer represents developers who is using the upstream services.
@@ -296,6 +307,10 @@ Below is the example of Consumer definition:
     "username": "the_users"
   }
 ]
+```
+```yaml
+consumers:
+  - username: the_users
 ```
 
 Next, add JWT Credentials and associate it with Consumer that we created before.
@@ -308,6 +323,22 @@ Next, add JWT Credentials and associate it with Consumer that we created before.
     "rsa_public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzpqrQi4vpMCqQwHDV+2N\nPKcb54z1LIL6GtWm2ubT29iXiGGgfZc+lXlUNWnXbRvkL7v8MwbfPOnTu6FIfrFL\n4XZWoaaJFs4cT3Jt2LR8ZymVkwrfquCcfSJnOrskyI1eHA1ujnfC2LjuOFzkPSNu\nEk6t9/Z/zs8WP8axVvSUkB5EyvcZDoqeOBZj64OWOj07PJCOuSYEyb5Wq53Wf+a2\ngYDD8FjcjAAt+Be0PJITFHm3Z+ldt4bFL1oIkrHkAEE5c7pd18w5HDtgjmYWPs7O\nuUIibVfEy9nF6faLKq/16RYwSi87c45cOnBSIAEB7DiZKz5wsK1Ogw1A6JTYBi6N\ncwIDAQAB\n-----END PUBLIC KEY-----\n"
   }
 ]
+```
+```yaml
+jwt_secrets:
+  - consumer: the_users
+    key: http://localhost:8080/realms/foo-realm
+    algorithm: RS256
+    rsa_public_key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzpqrQi4vpMCqQwHDV+2N
+      PKcb54z1LIL6GtWm2ubT29iXiGGgfZc+lXlUNWnXbRvkL7v8MwbfPOnTu6FIfrFL
+      4XZWoaaJFs4cT3Jt2LR8ZymVkwrfquCcfSJnOrskyI1eHA1ujnfC2LjuOFzkPSNu
+      Ek6t9/Z/zs8WP8axVvSUkB5EyvcZDoqeOBZj64OWOj07PJCOuSYEyb5Wq53Wf+a2
+      gYDD8FjcjAAt+Be0PJITFHm3Z+ldt4bFL1oIkrHkAEE5c7pd18w5HDtgjmYWPs7O
+      uUIibVfEy9nF6faLKq/16RYwSi87c45cOnBSIAEB7DiZKz5wsK1Ogw1A6JTYBi6N
+      cwIDAQAB
+      -----END PUBLIC KEY-----
 ```
 Where:
 1. `consumer` (required): The id or username property of the consumer entity to associate the credentials to.
@@ -389,6 +420,50 @@ After add JWT Plugin Configuration, below is complete Kong Configuration:
         }
     ]
 }
+```
+```yaml
+_format_version: '3.0'
+_transform: true
+services:
+  - url: http://172.17.0.1:3000
+    name: member_service
+    routes:
+      - name: member_route
+        paths:
+          - /member
+        strip_path: true
+  - url: https://api.github.com
+    name: remote_git_service
+    routes:
+      - name: remote_git_route
+        paths:
+          - /git
+        strip_path: true
+plugins:
+  - name: jwt
+    enabled: true
+    service: member_service
+    config:
+      secret_is_base64: false
+      claims_to_verify:
+        - exp
+      key_claim_name: iss
+consumers:
+  - username: the_users
+jwt_secrets:
+  - consumer: the_users
+    algorithm: RS256
+    key: http://localhost:8080/realms/foo-realm
+    rsa_public_key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzpqrQi4vpMCqQwHDV+2N
+      PKcb54z1LIL6GtWm2ubT29iXiGGgfZc+lXlUNWnXbRvkL7v8MwbfPOnTu6FIfrFL
+      4XZWoaaJFs4cT3Jt2LR8ZymVkwrfquCcfSJnOrskyI1eHA1ujnfC2LjuOFzkPSNu
+      Ek6t9/Z/zs8WP8axVvSUkB5EyvcZDoqeOBZj64OWOj07PJCOuSYEyb5Wq53Wf+a2
+      gYDD8FjcjAAt+Be0PJITFHm3Z+ldt4bFL1oIkrHkAEE5c7pd18w5HDtgjmYWPs7O
+      uUIibVfEy9nF6faLKq/16RYwSi87c45cOnBSIAEB7DiZKz5wsK1Ogw1A6JTYBi6N
+      cwIDAQAB
+      -----END PUBLIC KEY-----
 ```
 *Note: we removed **rate-limiting** plugin for shorten our new config*
 
