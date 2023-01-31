@@ -281,6 +281,10 @@ ERROR:
   Message: unexpected HTTP status code received from server: 404 (Not Found); malformed header: missing HTTP content-type
 ```
 
+## Applying Kong JWT Plugin
+Refer to [this guide](Deploy_Kong_REST.md)
+
+
 ## Destroy Kong Gateway Container
 If you’re done testing Kong Gateway and no longer need the containers, you can clean them up using the following commands:
 ```sh
