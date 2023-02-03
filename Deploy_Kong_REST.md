@@ -504,7 +504,7 @@ And we get the JWT:
 }
 ```
 Invoke the API:
-```
+```sh
 curl -X GET -H 'Authorization: Bearer <your_JWT>' http://localhost:8000/member/api/v1/members
 ```
 The response should be like:

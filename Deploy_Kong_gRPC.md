@@ -282,7 +282,12 @@ ERROR:
 ```
 
 ## Applying Kong JWT Plugin
-Refer to [this guide](Deploy_Kong_REST.md)
+Refer to [this guide](./Deploy_Kong_REST.md#applying-kong-jwt-plugin)
+
+You can test if it is working by run command:
+```sh
+grpcurl -H 'Authorization: Bearer <your_JWT>' -plaintext -import-path $path/member-app-grpc -proto member.proto localhost:9080 member.MemberService/GetAllMembers
+```
 
 
 ## Destroy Kong Gateway Container
