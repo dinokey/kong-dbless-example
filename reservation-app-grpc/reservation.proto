@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package reservation;
+
+message ReservationId {
+    string id = 1;
+}
+
+message Reservation {
+    string id = 1;
+    string guestName = 2;
+    string roomType = 3;
+}
+
+service ReservationService {
+    rpc AddReservation (Reservation) returns (ReservationList) {}
+    rpc getReservation (ReservationId) returns (Reservation) {}
+    rpc GetAllReservations (Empty) returns (ReservationList) {}
+    rpc DeleteReservation (ReservationId) returns (ReservationList) {}
+    rpc EditReservation (Reservation) returns (Reservation) {}
+
+}
+
+message Empty {}
+
+message ReservationList {
+   repeated Reservation reservations = 1;
+}

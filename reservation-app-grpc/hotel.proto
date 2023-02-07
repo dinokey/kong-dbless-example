@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package hotel;
+
+message HotelId {
+    string id = 1;
+}
+
+message Hotel {
+    string id = 1;
+    string name = 2;
+    string location = 3;
+}
+
+service HotelService {
+    rpc AddHotel (Hotel) returns (HotelList) {}
+    rpc getHotel (HotelId) returns (Hotel) {}
+    rpc GetAllHotels (Empty) returns (HotelList) {}
+    rpc DeleteHotel (HotelId) returns (HotelList) {}
+    rpc EditHotel (Hotel) returns (Hotel) {}
+
+}
+
+message Empty {}
+
+message HotelList {
+   repeated Hotel hotels = 1;
+}
