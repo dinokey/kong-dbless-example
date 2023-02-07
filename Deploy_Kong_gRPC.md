@@ -160,7 +160,7 @@ The response may looks like:
 
 Lets try other gRPC endpoint and method:
 ```sh
-grpcurl -d '{"id": "", "name": "Tcala", "place": "Wakanda", "hobby": "Running"}' -plaintext $path/member-app-grpc -proto member.proto localhost:9080 member.MemberService/AddMember
+grpcurl -d '{"id": "", "name": "Tcala", "place": "Wakanda", "hobby": "Running"}' -plaintext -import-path $path/member-app-grpc -proto member.proto localhost:9080 member.MemberService/AddMember
 ```
 
 The response may looks like:
