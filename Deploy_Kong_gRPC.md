@@ -281,6 +281,164 @@ ERROR:
   Message: unexpected HTTP status code received from server: 404 (Not Found); malformed header: missing HTTP content-type
 ```
 
+## Proxying Multiple gRPC Service
+At the previous guide, we have proxied gRPC requests to single gRPC Service (Member Service). Now, lets start something more advance. The Diagram below will help you understand what we want to do.
+
+![kong-grpc-route-diagram](./images/kong-grpc-routing-diagram.png)
+
+The diagram above shows the flow of client requests routed by Kong to multiple gRPC Service. There are 3 gRPC Services inside 2 gRPC Server. In this section we want to route gRPC requests to multiple gRPC Services.
+
+### 1. Run Reservation App gRPC
+To demonstrate the diagram above, we need to run Reservation App gRPC which located at `reservation-app-grpc` folder. The app contains 2 gRPC Services; Hotel Service and Reservation Service.
+
+just open terminal in `reservation-app-grpc` folder, and run command: 
+```sh
+npm install && node grpc-server.js
+```
+The app should be run on Port 50052.
+
+### 2. Update Kong Gateway Configuration
+Lets update our Kong Config to be like below:
+```json
+{
+  "_format_version": "3.0",
+    "_transform": true,
+    "services": [
+        {
+            "url": "grpc://172.17.0.1:50051",
+            "name": "grpc_member_service",
+            "routes": [
+                {
+                    "name": "grpc_member_route",
+                    "protocols": [
+                        "grpc"
+                    ],
+                    "paths": [
+                        "/member.MemberService/"
+                    ]
+                }
+            ]
+        },
+        {
+            "url": "grpc://172.17.0.1:50052",
+            "name": "grpc_reservation_service",
+            "routes": [
+                {
+                    "name": "grpc_reservation_route",
+                    "protocols": [
+                        "grpc"
+                    ],
+                    "paths": [
+                        "/reservation.ReservationService/",
+                        "/hotel.HotelService/"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+in YAML format:
+```yaml
+_format_version: "3.0"
+_transform: true
+
+services:
+- url: grpc://172.17.0.1:50051
+  name: grpc_member_service
+  routes:
+  - name: grpc_member_route
+    protocols: 
+    - grpc
+    paths:
+    - /member.MemberService/
+- url: grpc://172.17.0.1:50052
+  name: grpc_reservation_service
+  routes:
+  - name: grpc_reservation_route
+    protocols: 
+    - grpc
+    paths:
+    - /reservation.ReservationService/
+    - /hotel.HotelService/
+```
+
+Important to note when configuring Kong to proxy multiple gRPC Services:
+- Do not fill the Kong Service's route path with `/`, you need to specify it.
+- Fill every Kong Service's route path with your gRPC Services. The format is: `/{gRPCPackageName}.{gRPCServiceName}/`. By added it, you were allowed client to access all methods inside your gRPC Service. If you need to restrict some methods of your gRPC Service, fill Kong Service's route path with format `/{gRPCPackageName}.{gRPCServiceName}/{gRPCMethodName}`. Then, only gRPC method you were specified could be access by the user.
+
+Send the JSON config to Kong `/config` endpoint:
+![kong-grpc-advance-config](./images/kong-grpc-advance-config.png)
+
+### 3. Test All gRPC Services
+At the previous step, we had gRPC Services running and configured Kong in front of it. Now, lets invoke gRPC Services from Kong.
+- Invoke Member Service
+```sh
+grpcurl -plaintext -import-path $path/member-app-grpc -proto member.proto localhost:9080 member.MemberService/GetAllMembers
+```
+The response may looks like:
+```json
+{
+  "members": [
+    {
+      "id": "1",
+      "name": "Dinokey",
+      "place": "Jakarta",
+      "hobby": "Sleep"
+    },
+    {
+      "id": "2",
+      "name": "John Doe",
+      "place": "Malang",
+      "hobby": "Running"
+    }
+  ]
+}
+```
+- Invoke Hotel Service
+```sh
+grpcurl -plaintext -import-path $path/reservation-app-grpc -proto hotel.proto localhost:50052 hotel.HotelService/GetAllHotels
+```
+The response may looks like:
+```json
+{
+  "hotels": [
+    {
+      "id": "1",
+      "name": "De Houtel",
+      "location": "Jakarta"
+    },
+    {
+      "id": "2",
+      "name": "The View",
+      "location": "Bandung"
+    }
+  ]
+}
+```
+- Invoke Reservation Service
+```sh
+grpcurl -plaintext -import-path $path/reservation-app-grpc -proto reservation.proto localhost:9080 reservation.ReservationService/GetAllReservations
+```
+The response may looks like:
+```json
+{
+  "reservations": [
+    {
+      "id": "1",
+      "guestName": "Dinokey",
+      "roomType": "Suite"
+    },
+    {
+      "id": "2",
+      "guestName": "John Doe",
+      "roomType": "Deluxe"
+    }
+  ]
+}
+```
+
+
 ## Applying Kong JWT Plugin
 Refer to [this guide](./Deploy_Kong_REST.md#applying-kong-jwt-plugin)
 
